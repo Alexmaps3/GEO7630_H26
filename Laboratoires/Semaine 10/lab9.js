@@ -12,8 +12,8 @@
 var map = new maplibregl.Map({
     container: 'map',
     style: 'https://api.maptiler.com/maps/streets/style.json?key=JhO9AmIPH59xnAn5GiSj',
-    center: [12.338, 45.4385],
-    zoom: 17.4
+    center: [-73.55, 45.55],
+    zoom: 12
 });
 
 // On declare une variable pour contenir notre GeoJSON mais on ne l'initialise pas tout de suite
@@ -30,6 +30,7 @@ var geoJSONcontent
 // on pourra utiliser cet objet pour le traiter dans la fonction ensuite
 
 function handleFileSelect(evt) {
+
     // On declare la variable qui contiendra le fichier
     var file = evt.target.files[0]; 
 
@@ -71,7 +72,19 @@ function handleFileSelect(evt) {
             'id': 'geojson',
             'type': 'fill',
             'source': 'geojson-source'
-        });
+        }); map.addLayer({
+  'id': 'geojson-label',
+  'type': 'symbol',
+  'source': 'geojson-source',
+  'layout': {
+    'text-field': ['get', 'operator_id'],
+  },
+  'paint': {
+    'text-color': '#202',
+    'text-halo-color': '#fff',
+    'text-halo-width': 2
+  }
+})
     };
     // FIN DE LA FONCTION reader.onload
 
@@ -79,6 +92,7 @@ function handleFileSelect(evt) {
     // Cette fonction permet de mettre le futur geojson en memoire en tant que texte
     reader.readAsText(file, 'UTF-8');
 }
+
 // Ici on initialise la fonction qui va nous permettre de zoomer sur notre geojson
 function zoomToGeoJSON () {
     // L'objet map expose une methode qui permet de zoomer sur une entite geographique
@@ -93,12 +107,30 @@ function zoomToGeoJSON () {
 }
 
 // Ici on initialise la fonction qui va nous permettre de colorier notre geojson
-function colorPolygons () {
-    // L'objet map expose une methode qui permet de changer les proprietes esthetiques d'un layer
-    // setPaintProperty(identifiant du layer, propriete a changer, valeur de la propriete que vous voulez donner)
-    // Documentation : https://docs.mapbox.com/mapbox-gl-js/api/map/#map#setpaintproperty
-    map.setPaintProperty("geojson", "fill-color", "red")
-}
+function colorPolygons() {
+    if (map.getLayer('garages-layer')) {
+        map.removeLayer('garages-layer');
+    }
+ 
+    map.addLayer({
+        'id': 'garages-layer',
+        'type': 'fill',
+        'source': 'geojson-source',
+        'paint': {
+            'fill-color': [
+                'match',
+                ['get', 'operator_id'],
+                2, randomColor2(),
+                3, randomColor2(),
+                15, randomColor2(),
+                20, randomColor2(),
+                25, randomColor2(),
+                30, randomColor2(),
+                '#000000'
+            ],
+            'fill-opacity': 0.8
+        }
+    })};
 
 // Ici on va initialiser l'evenement qui se passe lorsqu'on clique sur un bouton
 // document : fait reference a la page html qui appel ce script (lab6.html)
