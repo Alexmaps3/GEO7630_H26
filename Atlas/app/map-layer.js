@@ -59,7 +59,7 @@ var arrondissementsLabelsLayer = {
   type: 'symbol',
   source: 'arrondissements_source',
   layout: {
-    'text-field': ['get', 'nom'],
+    'text-field': ['get', 'NOM'],
     'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
     'text-size': 14,
     'text-anchor': 'center'
